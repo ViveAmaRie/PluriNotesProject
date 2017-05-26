@@ -17,6 +17,9 @@ using namespace TIME;
 /*********************************************************************
 ***                          NotesException                        ***
 **********************************************************************/
+/*! \class NotesException
+        \brief Classe d'ensemble d'exceptions générées par les Notes
+*/
 
 class NotesException{
 public:
@@ -35,6 +38,10 @@ private:
 /*********************************************************************
 ***                           NotesManager                         ***
 **********************************************************************/
+/*! \class NotesManager
+        \brief Classe singleton qui gère les Notes, dont elle est composée
+*/
+
 class NotesManager
 {
     //! Tableau de pointeurs sur des Notes
@@ -149,6 +156,9 @@ public:
 /*********************************************************************
 ***                             Note                               ***
 **********************************************************************/
+/*! \class Note
+        \brief Classe de Notes composant NotesManager
+*/
 
 class Note {
     friend class NotesManager; // La classe NotesManager peut utiliser les méthodes privées d'Note
@@ -221,7 +231,7 @@ ostream& operator<<(ostream& f, const Note& n);
 
 
 /*! \enum TaskStatus
-        \brief Classe d'ensembles de taches, héritant de Notes
+        \brief Classe d'ensemble de taches, héritant de Notes
 */
 enum TaskSTatus{
     pending,
@@ -231,27 +241,27 @@ enum TaskSTatus{
 
 class Task : public Notes {
 private:
-    //!action d'une tache
+    //! Action d'une tache
     string action;
-    //!priorité d'une tache
+    //! Priorité d'une tache
     int priority;
-    //!deadline d'uune tache
+    //! Deadline d'uune tache
     Date deadline;
-    //!état de la tache
+    //! Etat de la tache
     STATUS taskStatus;
 public:
-    //!retourne l'action d'une tache
+    //! Retourne l'action d'une tache
     string getAction() const {return action;}
-    //!retourne la priorité d'une tache
+    //! Retourne la priorité d'une tache
     int getPriority() const {return priority;}
-    //!retourne le deadline d'une tache
+    //! Retourne la deadline d'une tache
     Date getDeadline() const {return deadline;}
-    //!retourne l'état de la tache
+    //! Retourne l'état de la tache
     STATUS getTaskStatus() const {return taskStatus;}
 
 };
 
-/*! \brief Classe d'ensembles d'Articles, héritant de Notes
+/*! \brief Classe d'ensemble d'Articles, héritant de Notes
 */
 class Article : public Notes {
 private:
@@ -262,7 +272,7 @@ public:
     string getText() const {return text;}
 };
 
-/*! \brief Classe d'ensembles de mutltimédia, héritant de Notes
+/*! \brief Classe d'ensemble de mutltimédia, héritant de Notes
 */
 
 class Multimedia : public Notes {
