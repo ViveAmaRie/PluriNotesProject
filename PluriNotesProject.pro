@@ -2,4 +2,5 @@ SOURCES += \
     main.cpp
 
 HEADERS += \
-    plurinotes.h
+    plurinotes.h \
+    timing.h
