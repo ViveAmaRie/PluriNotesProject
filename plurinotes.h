@@ -205,11 +205,12 @@ ostream& operator<<(ostream& f, const Note& n);
 
 
 /*! \enum TaskStatus
-        \brief Classe d'ensembles de taches, héritant de Tache
-        La classe possède un pointeur de Taches qui représente les composants de la tache composite.
+        \brief Classe d'ensembles de taches, héritant de Notes
 */
 enum TaskSTatus{
-
+    pending,
+    inProgress,
+    done,
 };
 
 class Task : public Notes {
@@ -222,9 +223,57 @@ private:
     Date deadline;
     //!état de la tache
     STATUS taskStatus;
-
-
 public:
+    //!retourne l'action d'une tache
+    string getAction() const {return action;}
+    //!retourne la priorité d'une tache
+    int getPriority() const {return priority;}
+    //!retourne le deadline d'une tache
+    Date getDeadline() const {return deadline;}
+    //!retourne l'état de la tache
+    STATUS getTaskStatus() const {return taskStatus;}
+
+};
+
+/*! \brief Classe d'ensembles d'Articles, héritant de Notes
+*/
+class Article : public Notes {
+private:
+    //!texte d'un article
+    string text;
+public:
+    //!retourne le texte d'un article
+    string getText() const {return text;}
+};
+
+/*! \brief Classe d'ensembles de mutltimédia, héritant de Notes
+*/
+
+class Multimedia : public Notes {
+private:
+    //!description
+    string description;
+    //!fichier image
+    string filePicture; //type à discuter
+public:
+    //!retourne la description d'un multimedia
+    string getDescription() const {return description;}
+    //!retourne le fichier image que contient le multimedia
+    string getFilePicture() const {return filePicture;}
+};
+/*! \brief Classe d'ensembles d'enregistrements audio, héritant de Multimedia
+*/
+class Audio : public Multimedia {
+
+};
+/*! \brief Classe d'ensembles d'enregistrements video, héritant de Multimedia
+*/
+class Video : public Multimedia {
+
+};
+/*! \brief Classe d'ensembles d'image, héritant de Multimedia
+*/
+class Picture : public Multimedia {
 
 };
 
