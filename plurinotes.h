@@ -20,7 +20,9 @@ using namespace TIME;
 
 class NotesException{
 public:
-    NotesException(const string& message):info(message) {}
+    //! Constructeur à partir d'un string
+    NotesException(const string& message): info(message) {}
+    //! Retourne le message d'erreur
     string getInfo() const {
         return info;
     }
@@ -85,24 +87,28 @@ class NotesManager
     //! Générateur d'identificateurs pour les Notes
     string genererId();
 
+    //! Garde le pointeur d'une note existante (à partir d'un nom, d'un nom de fichier et d'une date de disponibilité) dans le tableau notes
+    Note& addNote(const string& nom, const string& filename, const Date& dispo);
+    //! Garde le pointeur d'une note existante n dans le tableau notes
+    Note& addNote(Note *n);
+
 public:
     //! Renvoie la seule instance de NotesManager
     static NotesManager& getInstance();
     //! Renvoie la seule instance de NotesManager
     static void libererInstance();
 
-    //! Crée une Note et garde son pointeur dans le tableau notes, à partir d'un nom, d'un nom de fichier et d'une date de disponibilité
-    Note& addNote(const string& nom, const string& filename, const Date& dispo);
     //! Renvoie une référence vers la Note correspondant à id si elle existe dans le tableau notes
     Note& getNote(const string& id);
     //! Renvoie une référence const vers la Note correspondant à id si elle existe dans le tableau notes
     const Note& getNote(const string& code) const;
-
+    //! Renvoie une référence vers la nouvelle Note créée avec l'id id
     Note& getNewNote(const string& id);
 
 // Class Iterator
     // Dans la partie public car on doit pouvoir y accéder depuis le main
     class Iterator {
+        //!
         friend class NotesManager; // Car la méthode Iterator getIterator() const; va utiliser le constructeur Iterator(Note** a, int nbR); qui est dans la zone privée
         // On a besoin d'un pointeur qui pointe sur l'Note courant
         Note** currentNote;
@@ -129,6 +135,7 @@ public:
         }
     };
 
+    //! Renvoie un itérateur sur le tableau notes
     Iterator getIterator() const {
         return Iterator(notes, nbNotes);
     }
@@ -145,52 +152,61 @@ public:
 
 class Note {
     friend class NotesManager; // La classe NotesManager peut utiliser les méthodes privées d'Note
+    //! Identifiant de la note
     string id;
+    //! Titre de la note
     string title;
+    //! Texte de la note
     string text;
+    //! Date de création de la note
     Date dateCreation;
+    //! Date de dernière modification de la note
     Date dateLastModif;
-    string status;
+    //! Etat de la note : active ou archivée
+    string noteStatus;
 
+    //! Constructeur de Note par recopie interdit
     Note(const Note& n): id(n.id), title(n.title), text(n.text){}
+    //! Affectation, Recopie par operator= interdite
     Note& operator=(const Note& n) const;
 
   public:
+    //! Constructeur de Note à partir d'un id, d'un titre et d'un texte
+    Note(const string& id, const string& title, const string& text) : id(id), title(title), text(text) {}
+
+    //! Retourne l'identificateur de la Note
     const string& getId() const {return id;}
+    //! Retourne le titre de la Note
     const string& getTitle() const {return title;}
+    //! Retourne le texte de la Note
     const string& getText() const {return text;}
+    //! Retourne la date de création de la Note
     const string& getDateCreation() const {return dateCreation;}
+    //! Retourne la date de dernière modification de la Note
     const string& getDateLastModif() const {return dateLastModif;}
 
-    void edit() {
+    //! Edite de la Note
+    void edit();
 
-    }
+    //! Retourne une référence sur la version courante de la Note
+    Note& getCurrentVersion();
 
-    Note& getCurrentVersion() {
+    //! Retourne une référence sur la version de la Note ayant le numéro numVersion
+    Note& getOlderVersion(int numVersion);
 
-    }
+    //! Sauvegarde une version de la Note ayant le numéro numVersion
+    void saveVersion(int numVersion);
 
-    Note& getOlderVersion(int numVersion) {
+    //! Restaure une ancienne version de la Note ayant le numéro numVersion
+    void restoreVersion(int numVersion);
 
-    }
+    //! Crée une nouvelle Relation r composée des Notes n1 et n2
+    void createRelation(Relation r, Note n1, Note n2) ;
 
-    void saveOlderVersion(int numVersion) {
-
-    }
-
-    void restoreVersion(int numVersion) {
-
-    }
-
-    void createRelation() {
-
-    }
-
+    //! Retourne le titre de la Note
     void setTitle(const string& t) {title = t;}
+    //! Retourne le texte de la Note
     void setText(const string& t) {text = t;}
-
-    Note(const string& _id, const string& _title, const string& _text) :
-        id(_id), title(_title), text(_text) {}
 
 };
 /*********************************************************************/
@@ -227,5 +243,25 @@ private:
 public:
 
 };
+
+
+
+
+
+
+class Relation {
+    string title;
+    string description;
+
+public:
+    //! Constructeur d'une Relation à partir d'un titre et d'une description
+    Relation(const string& titre, const string& description): title(titre), description(description){}
+
+    //! Retourne le titre de la Note
+    const string& getTitle() const {return title;}
+    //! Retourne le titre de la Note
+    const string& getDescription() const {return description;}
+};
+
 
 #endif // PLURINOTES_H
