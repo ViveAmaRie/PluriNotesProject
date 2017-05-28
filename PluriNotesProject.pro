@@ -1,8 +1,11 @@
 SOURCES += \
-    main.cpp
+    main.cpp \
+    noteeditor.cpp \
+    plurinotes.cpp
 
 HEADERS += \
     plurinotes.h \
-    timing.h
+    timing.h \
+    noteeditor.h
 
-QT       += core gui widgets
+QT += core gui widgets

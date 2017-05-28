@@ -1,13 +1,13 @@
 #ifndef PLURINOTES_H
 #define PLURINOTES_H
 
-
-#include<string>
-#include<iostream>
-#include<typeinfo>
-#include<QObject>
-#include<QFile>
-#include<QXmlStreamWriter>
+#include <string>
+#include <iostream>
+#include <typeinfo>
+#include <QObject>
+#include <QFile>
+#include <QXmlStreamWriter>
+#include <QString>
 #include "timing.h"
 
 using namespace std;
@@ -21,16 +21,16 @@ using namespace TIME;
         \brief Classe d'ensemble d'exceptions générées par les Notes
 */
 
-class NotesException{
+class NotesException {
 public:
-    //! Constructeur à partir d'un string
-    NotesException(const string& message): info(message) {}
+    //! Constructeur à partir d'un QString
+    NotesException(const QString& message): info(message) {}
     //! Retourne le message d'erreur
-    string getInfo() const {
+    QString getInfo() const {
         return info;
     }
 private:
-    string info;
+    QString info;
 };
 /*********************************************************************/
 
@@ -42,8 +42,7 @@ private:
         \brief Classe singleton qui gère les Notes, dont elle est composée
 */
 
-class NotesManager
-{
+class NotesManager {
     //! Tableau de pointeurs sur des Notes
     Note** notes;
     //! Nombre de Notes dans le tableau
@@ -53,28 +52,28 @@ class NotesManager
     //! Ajoute la Note n au tableau notes
     void addNote(Note* n);
     //! Nom du fichier
-    string filename;
+    mutable QString filename;
 
     //! Renvoie la Note correspondant à id si elle dans le tableau notes
-    Note* findNote(const string& id) const;
+    Note* findNote(const QString& id) const;
 
 
     //! Constructeur qui initialise le tableau et sa taille à 0
-    NotesManager():notes(NULL), nbNotes(0),
-                   nbMaxNotes(0), filename("tmp.dat"){}
+    NotesManager():notes(nullptr), nbNotes(0),
+                   nbMaxNotes(0), filename("tmp.xml"){}
 
     //! Constructeur de recopie interdite
-    NotesManager(const NotesManager& n);
+    NotesManager(const NotesManager& m);
 
     //! Destructeur de NotesManager, détruit les Notes puis le tableau notes
-    ~ProjetManager(){
-        for(unsigned int i = 0 ; i < nb ; i++)
-            delete projets[i];
-        delete[] projets;
-    }
+    ~NotesManager(){
+            for(unsigned int i = 0 ; i < nbNotes ; i++)
+                delete notes[i];
+            delete[] notes;
+        }
 
     //! Surcharge de =, recopie par operator= interdite
-    NotesManager& operator=(const NotesManager&);
+    NotesManager& operator=(const NotesManager& m);
 
     struct Handler {
         NotesManager* instance;
@@ -92,25 +91,35 @@ class NotesManager
     static Handler handler;
 
     //! Générateur d'identificateurs pour les Notes
-    string genererId();
+    QString genererId();
 
     //! Garde le pointeur d'une note existante (à partir d'un nom, d'un nom de fichier et d'une date de disponibilité) dans le tableau notes
-    Note& addNote(const string& nom, const string& filename, const Date& dispo);
+    Note& addNote(const QString& nom, const QString& filename, const Date& dispo);
     //! Garde le pointeur d'une note existante n dans le tableau notes
     Note& addNote(Note *n);
 
 public:
     //! Renvoie la seule instance de NotesManager
-    static NotesManager& getInstance();
+    static NotesManager& getManager();
     //! Renvoie la seule instance de NotesManager
-    static void libererInstance();
+    static void freeManager();
 
     //! Renvoie une référence vers la Note correspondant à id si elle existe dans le tableau notes
-    Note& getNote(const string& id);
+    Note& getNote(const QString& id);
     //! Renvoie une référence const vers la Note correspondant à id si elle existe dans le tableau notes
-    const Note& getNote(const string& code) const;
+    const Note& getNote(const QString& code) const;
     //! Renvoie une référence vers la nouvelle Note créée avec l'id id
-    Note& getNewNote(const string& id);
+    Note& getNewNote(const QString& id);
+
+    //! Renvoie le nom du fichier
+    QString getFilename() const { return filename; }
+    void setFilename(const QString& f) { filename = f; }
+
+    //! Charge le fichier dont le nom correspond au filename
+    void load();
+
+    //! Sauvegarde la note dans le fichier appelé filename
+    void save() const;
 
 // Class Iterator
     // Dans la partie public car on doit pouvoir y accéder depuis le main
@@ -125,6 +134,7 @@ public:
         Iterator(Note** n, int nbR) : currentNote(n), nbRemain(nbR){}
 
     public:
+        Iterator(): nbRemain(0), currentNote(nullptr){}
         bool isDone() const {
             return nbRemain == 0;
         }
@@ -138,6 +148,8 @@ public:
             indice_projet = 0;
         }
         Note& current() const {
+            if(isDone())
+                throw NotesException("ERREUR : Fin de la collection\n");
             return **currentNote;
         }
     };
@@ -163,17 +175,17 @@ public:
 class Note {
     friend class NotesManager; // La classe NotesManager peut utiliser les méthodes privées d'Note
     //! Identifiant de la note
-    string id;
+    QString id;
     //! Titre de la note
-    string title;
+    QString title;
     //! Texte de la note
-    string text;
+    QString text;
     //! Date de création de la note
     Date dateCreation;
     //! Date de dernière modification de la note
     Date dateLastModif;
     //! Etat de la note : active ou archivée
-    string noteStatus;
+    QString noteStatus;
 
     //! Constructeur de Note par recopie interdit
     Note(const Note& n): id(n.id), title(n.title), text(n.text){}
@@ -182,18 +194,23 @@ class Note {
 
   public:
     //! Constructeur de Note à partir d'un id, d'un titre et d'un texte
-    Note(const string& id, const string& title, const string& text) : id(id), title(title), text(text) {}
+    Note(const QString& id, const QString& title, const QString& text) : id(id), title(title), text(text) {}
 
     //! Retourne l'identificateur de la Note
-    const string& getId() const {return id;}
+    const QString& getId() const {return id;}
     //! Retourne le titre de la Note
-    const string& getTitle() const {return title;}
+    const QString& getTitle() const {return title;}
     //! Retourne le texte de la Note
-    const string& getText() const {return text;}
+    const QString& getText() const {return text;}
     //! Retourne la date de création de la Note
-    const string& getDateCreation() const {return dateCreation;}
+    const QString& getDateCreation() const {return dateCreation;}
     //! Retourne la date de dernière modification de la Note
-    const string& getDateLastModif() const {return dateLastModif;}
+    const QString& getDateLastModif() const {return dateLastModif;}
+
+    //! Affecte une valeur au titre de la Note
+    void setTitle(const QString& t) { title = t; }
+    //! Affecte une valeur au texte de la Note
+    void setText(const QString& t) { text = t; }
 
     //! Edite de la Note
     void edit();
@@ -212,11 +229,6 @@ class Note {
 
     //! Crée une nouvelle Relation r composée des Notes n1 et n2
     void createRelation(Relation r, Note n1, Note n2) ;
-
-    //! Retourne le titre de la Note
-    void setTitle(const string& t) {title = t;}
-    //! Retourne le texte de la Note
-    void setText(const string& t) {text = t;}
 
 };
 /*********************************************************************/
@@ -242,7 +254,7 @@ enum TaskSTatus{
 class Task : public Notes {
 private:
     //! Action d'une tache
-    string action;
+    QString action;
     //! Priorité d'une tache
     int priority;
     //! Deadline d'uune tache
@@ -251,7 +263,7 @@ private:
     STATUS taskStatus;
 public:
     //! Retourne l'action d'une tache
-    string getAction() const {return action;}
+    QString getAction() const {return action;}
     //! Retourne la priorité d'une tache
     int getPriority() const {return priority;}
     //! Retourne la deadline d'une tache
@@ -266,10 +278,10 @@ public:
 class Article : public Notes {
 private:
     //!texte d'un article
-    string text;
+    QString text;
 public:
     //!retourne le texte d'un article
-    string getText() const {return text;}
+    QString getText() const {return text;}
 };
 
 /*! \brief Classe d'ensemble de mutltimédia, héritant de Notes
@@ -278,14 +290,14 @@ public:
 class Multimedia : public Notes {
 private:
     //!description
-    string description;
+    QString description;
     //!fichier image
-    string filePicture; //type à discuter
+    QString filePicture; //type à discuter
 public:
     //!retourne la description d'un multimedia
-    string getDescription() const {return description;}
+    QString getDescription() const {return description;}
     //!retourne le fichier image que contient le multimedia
-    string getFilePicture() const {return filePicture;}
+    QString getFilePicture() const {return filePicture;}
 };
 /*! \brief Classe d'ensembles d'enregistrements audio, héritant de Multimedia
 */
@@ -309,17 +321,17 @@ class Picture : public Multimedia {
 
 
 class Relation {
-    string title;
-    string description;
+    QString title;
+    QString description;
 
 public:
     //! Constructeur d'une Relation à partir d'un titre et d'une description
-    Relation(const string& titre, const string& description): title(titre), description(description){}
+    Relation(const QString& titre, const QString& description): title(titre), description(description){}
 
     //! Retourne le titre de la Note
-    const string& getTitle() const {return title;}
+    const QString& getTitle() const {return title;}
     //! Retourne le titre de la Note
-    const string& getDescription() const {return description;}
+    const QString& getDescription() const {return description;}
 };
 
 
