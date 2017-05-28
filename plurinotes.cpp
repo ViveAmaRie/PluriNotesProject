@@ -36,7 +36,7 @@ void NotesManager::freeManager(){
     handler.instance=nullptr;
 }
 
-Article& NotesManager::getNote(const QString& id){
+Note& NotesManager::getNote(const QString& id){
     // si la note existe déjà, on en renvoie une référence
     for(unsigned int i = 0 ; i < nbNotes ; i++){
         if (notes[i]->getId() == id)
@@ -45,6 +45,8 @@ Article& NotesManager::getNote(const QString& id){
     // sinon elle est créée
     Note* n = new Note(id,"","");
     addNote(n);
+
+    return *n;
 }
 
 void NotesManager::save() const {

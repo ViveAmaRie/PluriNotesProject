@@ -9,3 +9,4 @@ HEADERS += \
     noteeditor.h
 
 QT += core gui widgets
+QT += xml

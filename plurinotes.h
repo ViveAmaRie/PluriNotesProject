@@ -108,9 +108,9 @@ class Note {
     //! Retourne le texte de la Note
     const QString& getText() const {return text;}
     //! Retourne la date de création de la Note
-    const QString& getDateCreation() const {return dateCreation;}
+    const Date& getDateCreation() const {return dateCreation;}
     //! Retourne la date de dernière modification de la Note
-    const QString& getDateLastModif() const {return dateLastModif;}
+    const Date& getDateLastModif() const {return dateLastModif;}
 
     //! Affecte une valeur au titre de la Note
     void setTitle(const QString& t) { title = t; }
@@ -282,10 +282,9 @@ class NotesManager {
     //! Générateur d'identificateurs pour les Notes
     QString genererId();
 
-    //! Garde le pointeur d'une note existante (à partir d'un nom, d'un nom de fichier et d'une date de disponibilité) dans le tableau notes
-    Note& addNote(const QString& nom, const QString& filename, const Date& dispo);
+    //! Garde le pointeur d'une note existante (à partir d'un nom, d'un nom de fichier et d'un texte) dans le tableau notes
+    Note& addNote(const QString& nom, const QString& filename, const QString& text);
     //! Garde le pointeur d'une note existante n dans le tableau notes
-    //Note& addNote(Note *n);
 
 public:
     //! Renvoie la seule instance de NotesManager

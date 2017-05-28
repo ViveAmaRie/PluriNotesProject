@@ -33,7 +33,7 @@ namespace TIME {
 
         /*! \param j jour avec 1<=j<=31
             \param m mois avec 1<=m<=12
-            \param a ann�e avec a>=0
+            \param a année avec a>=0
             */
         Date(unsigned int short j=1, unsigned int short m=1, unsigned int a=0):jour(1),mois(1),annee(0){ setDate(j,m,a); }
         // m�thodes
@@ -41,9 +41,9 @@ namespace TIME {
         unsigned short int  getJour() const { return jour; }
         //! Retourne le mois de la date
         unsigned short int  getMois() const { return mois; }
-        //! Retourne l'ann�e de la date
+        //! Retourne l'année de la date
         unsigned int getAnnee() const { return annee; }
-        //! Retourne l'ann�e de la date
+        //! Retourne l'année de la date
         QDate getQDate() const { return QDate(annee, mois, jour); }
         std::string getJourMoisString() const {
             std::stringstream sstm;
@@ -80,7 +80,7 @@ namespace TIME {
     /*! \class Horaire
             \brief Classe permettant de manipuler des horaires
             L'utilisation de cette classe n�cessite des dates valides au sens commun du terme.
-            D�clenchement d'exception dans le cas contraire
+            Déclenchement d'exception dans le cas contraire
     */
     class Horaire{
     public:
@@ -107,7 +107,7 @@ namespace TIME {
             return ret;
         //!Retourne l'heure sous forme de chaine
         }
-        const Horaire operator+( const Duree& d) const { return Horaire((heure+d.getDureeEnHeuresInt())%24, minute+d.getDureeEnMinutes()-d.getDureeEnHeuresInt()*60); }
+
         //!Retourne l'heure de l'horaire
         unsigned short int getHeure() const { return heure; }
         //!Retourne les minutes de l'horaire
@@ -125,6 +125,5 @@ std::ostream& operator<<(std::ostream&, const TIME::Date&);
 std::ostream& operator<<(std::ostream& f, const TIME::Horaire & h);
 
 std::istream& operator>>(std::istream&, TIME::Date&); // lecture format JJ/MM/AAAA
-std::istream& operator>>(std::istream&, TIME::Duree&); //lecture format hhHmm
 
 #endif // TIMING_H

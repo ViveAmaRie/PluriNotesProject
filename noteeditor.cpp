@@ -3,7 +3,7 @@
 #include <QMessageBox>
 
 NoteEditor::NoteEditor(Note &n, QWidget *parent)
-    : note(&n), QWidget(parent)
+    : QWidget(parent), note(&n)
 {
     id_l = new QLabel("ID : ");
     title_l = new QLabel("Titre : ");
@@ -28,12 +28,12 @@ NoteEditor::NoteEditor(Note &n, QWidget *parent)
     fenetre_vbox->addLayout(text_hbox);
     fenetre_vbox->addWidget(save);
 
-    id_t->setText(a.getId()); id_t->setReadOnly(true);
-    title_t->setText(a.getTitle());
-    text_t->setText(a.getText());
-    QObject::connect(title_t, SIGNAL(textChanged(QString)), this, SLOT(activerSave()));
-    QObject::connect(text_t, SIGNAL(textChanged()), this, SLOT(activerSave()));
-    QObject::connect(save, SIGNAL(clicked()), this, SLOT(saveArticle()));
+    id_t->setText(n.getId()); id_t->setReadOnly(true);
+    title_t->setText(n.getTitle());
+    text_t->setText(n.getText());
+    QObject::connect(title_t, SIGNAL(textChanged(QString)), this, SLOT(activerNote()));
+    QObject::connect(text_t, SIGNAL(textChanged()), this, SLOT(activerNote()));
+    QObject::connect(save, SIGNAL(clicked()), this, SLOT(activerNote()));
     save->setDisabled(true);
     this->setLayout(fenetre_vbox);
 }
@@ -45,8 +45,8 @@ void NoteEditor::activerSave()
 
 void NoteEditor::saveNote()
 {
-    article->setText(text_t->toPlainText());
-    article->setTitle(title_t->text());
+    note->setText(text_t->toPlainText());
+    note->setTitle(title_t->text());
     QMessageBox::information(this, "Sauvegarde", "Note sauvegardée !");
     save->setDisabled(true);
 }
