@@ -127,6 +127,4 @@ std::ostream& operator<<(std::ostream& f, const TIME::Horaire & h);
 std::istream& operator>>(std::istream&, TIME::Date&); // lecture format JJ/MM/AAAA
 std::istream& operator>>(std::istream&, TIME::Duree&); //lecture format hhHmm
 
-#endif
-
 #endif // TIMING_H
