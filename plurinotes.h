@@ -133,7 +133,7 @@ public:
         Iterator(Note** n, int nbR, bool s):tab(n), indice_note(0) ,nbRemain(nbR), allowSuppr(s){ }
 
     public:
-        bool isDone() const { return indice_note == nbNotes; }
+        bool isDone() const { return indice_note == nbRemain; }
         void next() { // Pas const car il va modifier l'iterator pour passer à l'élément suivant
             if(isDone())
                 throw NotesException("ERREUR : Fin de la collection\n");
@@ -142,7 +142,7 @@ public:
         }
         void first() { indice_note = 0; }
         Note& current() const {
-            if(indice_note>=nbNotes){
+            if(indice_note>=nbRemain){
                 throw NotesException("ERREUR : Fin de la collection\n");
             }
             return *tab[indice_note];
@@ -313,11 +313,6 @@ class Video : public Multimedia {
 class Picture : public Multimedia {
 
 };
-
-
-
-
-
 
 class Relation {
     string title;

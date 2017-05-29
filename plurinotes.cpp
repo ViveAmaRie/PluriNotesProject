@@ -12,10 +12,10 @@ void NotesManager::addNote(Note* n){
     notes[nbNotes++]=n;
 }
 void NotesManager::Iterator::suppr(){
-    if(allowSuppr && (nbNotes>0) && (nbNotes != indice_note)){
-        tab[indice_note] = tab[nbNotes];
+    if(allowSuppr && (nbRemain>0) && (nbRemain != indice_note)){
+        tab[indice_note] = tab[nbRemain];
         --indice_note;
-        --nbNotes;
+        --nbRemain;
     } else throw ("Suppression de tache impossible");
 }
 
