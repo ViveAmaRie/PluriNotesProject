@@ -1,15 +1,10 @@
 #include "plurinotes.h"
-<<<<<<< HEAD
 #include <QFile>
 #include <QTextCodec>
 #include <QtXml>
 #include <QMessageBox>
 
 void NotesManager::addNote(Note* n) {
-=======
-
-void NotesManager::addNote(Note* n){
->>>>>>> Diarra
     if (nbNotes==nbMaxNotes){
         Note** newtab=new Note*[nbMaxNotes+10];
         for(unsigned int i=0; i<nbNotes; i++) newtab[i]=notes[i];
@@ -18,14 +13,13 @@ void NotesManager::addNote(Note* n){
         notes=newtab;
         delete[] old;
     }
-<<<<<<< HEAD
     notes[nbNotes++] = n;
 }
 
-Note* NotesManager::findNote(const QString &id) const {
+
+Note* NotesManager::findNote(const QString& id) const{
     for(unsigned int i=0; i<nbNotes; i++)
-        if (id == notes[i]->getId())
-            return notes[i];
+        if (id==notes[i]->getId()) return notes[i];
     return 0;
 }
 
@@ -104,7 +98,7 @@ void NotesManager::load() {
                 xml.readNext();
                 //We're going to loop over the things because the order might change.
                 //We'll continue the loop until we hit an EndElement named article.
-                while(!(xml.tokenType() == QXmlStreamReader::EndElement && xml.name() == "article")) {
+                while(!(xml.tokenType() == QXmlStreamReader::EndElement && xml.name() == "note")) {
                     if(xml.tokenType() == QXmlStreamReader::StartElement) {
                         // We've found identificteur.
                         if(xml.name() == "id") {
@@ -140,8 +134,6 @@ void NotesManager::load() {
     // Removes any device() or data from the reader * and resets its internal state to the initial state.
     xml.clear();
     qDebug() << "fin load\n";
-=======
-    notes[nbNotes++]=n;
 }
 void NotesManager::Iterator::suppr(){
     if(allowSuppr && (nbRemain>0) && (nbRemain != indice_note)){
@@ -160,11 +152,4 @@ void NotesManager::deleteNote(Note* n){
         }
     }
     throw NotesException("Suppression impossible : notes non trouvée");
-}
-
-Note* NotesManager::findNote(const string& id)const{
-    for(unsigned int i=0; i<nbNotes; i++)
-        if (id==notes[i]->getId()) return notes[i];
-    return 0;
->>>>>>> Diarra
 }

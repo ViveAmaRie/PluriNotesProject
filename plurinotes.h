@@ -35,19 +35,17 @@ private:
 /*********************************************************************/
 
 
-<<<<<<< HEAD
-=======
 /*********************************************************************
 ***                           NotesManager                         ***
 **********************************************************************/
+class Relation;
 class Note;
 
 /*! \class NotesManager
         \brief Classe singleton qui gère les Notes, dont elle est composée
 */
 
-class NotesManager
-{
+class NotesManager {
     //! Tableau de pointeurs sur des Notes
     Note** notes;
     //! Nombre de Notes dans le tableau
@@ -56,86 +54,77 @@ class NotesManager
     unsigned int nbMaxNotes;
     //! Ajoute la Note n au tableau notes
     void addNote(Note* n);
-    //! Retire la Note n du tableau de notes
-    void deleteNote(Note* n);
     //! Nom du fichier
-    string filename;
+    mutable QString filename;
 
     //! Renvoie la Note correspondant à id si elle dans le tableau notes
-    Note* findNote(const string& id) const;
+    Note* findNote(const QString& id) const;
 
+    //! Retire la Note n du tableau de notes
+    void deleteNote(Note* n);
 
     //! Constructeur qui initialise le tableau et sa taille à 0
-    NotesManager():notes(NULL), nbNotes(0),
-                   nbMaxNotes(0), filename("tmp.dat"){}
->>>>>>> Diarra
+    NotesManager():notes(nullptr), nbNotes(0),
+                   nbMaxNotes(0), filename("tmp.xml"){}
 
+    //! Constructeur de recopie interdite
+    NotesManager(const NotesManager& m);
 
-<<<<<<< HEAD
-=======
     //! Destructeur de NotesManager, détruit les Notes puis le tableau notes
     ~NotesManager(){
-        for(unsigned int i = 0 ; i < nbNotes ; i++)
-            delete notes[i];
-        delete[] notes;
-    }
->>>>>>> Diarra
+            for(unsigned int i = 0 ; i < nbNotes ; i++)
+                delete notes[i];
+            delete[] notes;
+        }
 
+    //! Surcharge de =, recopie par operator= interdite
+    NotesManager& operator=(const NotesManager& m);
 
+    struct Handler {
+        NotesManager* instance;
 
-<<<<<<< HEAD
-=======
-        Handler() : instance(NULL){}
+        Handler() : instance(nullptr){}
         ~Handler() {
             if(instance)
                 delete instance;
-            instance = NULL;
+            instance = nullptr;
         }
->>>>>>> Diarra
 
+    };
 
+    //! Handler permettant de rendre NotesManager singleton
+    static Handler handler;
 
-/*********************************************************************
-***                           Relation                             ***
-**********************************************************************/
-/*! \class Relation
-        \brief Classe qui gère les relations et les couples qui constituent les relations
-*/
+    //! Générateur d'identificateurs pour les Notes
+    QString genererId();
 
-<<<<<<< HEAD
-class Relation {
-    QString title;
-    QString description;
-
-public:
-    //! Constructeur d'une Relation à partir d'un titre et d'une description
-    Relation(const QString& titre, const QString& description): title(titre), description(description){}
-
-    //! Retourne le titre de la Note
-    const QString& getTitle() const {return title;}
-    //! Retourne le titre de la Note
-    const QString& getDescription() const {return description;}
-};
-
-
-=======
-    //! Garde le pointeur d'une note existante (à partir d'un nom, d'un nom de fichier et d'une date de disponibilité) dans le tableau notes
-    Note& addNote(const string& nom, const string& filename, const Date& dispo);
+    //! Garde le pointeur d'une note existante (à partir d'un nom, d'un nom de fichier et d'un texte) dans le tableau notes
+    Note& addNote(const QString& nom, const QString& filename, const QString& text);
     //! Garde le pointeur d'une note existante n dans le tableau notes
-    //Note& addNote(Note *n);
+
 
 public:
     //! Renvoie la seule instance de NotesManager
-    static NotesManager& getInstance();
+    static NotesManager& getManager();
     //! Renvoie la seule instance de NotesManager
-    static void libererInstance();
+    static void freeManager();
 
     //! Renvoie une référence vers la Note correspondant à id si elle existe dans le tableau notes
-    Note& getNote(const string& id);
+    Note& getNote(const QString& id);
     //! Renvoie une référence const vers la Note correspondant à id si elle existe dans le tableau notes
-    const Note& getNote(const string& code) const;
+    const Note& getNote(const QString& code) const;
     //! Renvoie une référence vers la nouvelle Note créée avec l'id id
-    Note& getNewNote(const string& id);
+    Note& getNewNote(const QString& id);
+
+    //! Renvoie le nom du fichier
+    QString getFilename() const { return filename; }
+    void setFilename(const QString& f) { filename = f; }
+
+    //! Charge le fichier dont le nom correspond au filename
+    void load();
+
+    //! Sauvegarde la note dans le fichier appelé filename
+    void save() const;
 
 // Class Iterator
     // Dans la partie public car on doit pouvoir y accéder depuis le main
@@ -177,7 +166,8 @@ public:
         return Iterator(notes, nbNotes, false);
     }
 };
->>>>>>> Diarra
+
+/*********************************************************************/
 
 
 
@@ -223,20 +213,15 @@ class Note {
     //! Retourne le texte de la Note
     const QString& getText() const {return text;}
     //! Retourne la date de création de la Note
-<<<<<<< HEAD
-    const Date& getDateCreation() const {return dateCreation;}
+
+    const Date getDateCreation() const {return dateCreation;}
     //! Retourne la date de dernière modification de la Note
-    const Date& getDateLastModif() const {return dateLastModif;}
+    const Date getDateLastModif() const {return dateLastModif;}
 
     //! Affecte une valeur au titre de la Note
     void setTitle(const QString& t) { title = t; }
     //! Affecte une valeur au texte de la Note
     void setText(const QString& t) { text = t; }
-=======
-    Date getDateCreation() const {return dateCreation;}
-    //! Retourne la date de dernière modification de la Note
-    Date getDateLastModif() const {return dateLastModif;}
->>>>>>> Diarra
 
     //! Edite de la Note
     void edit();
@@ -341,141 +326,30 @@ class Picture : public Multimedia {
 
 };
 
-<<<<<<< HEAD
 
 
 
 
 /*********************************************************************
-***                           NotesManager                         ***
+***                           Relation                             ***
 **********************************************************************/
-/*! \class NotesManager
-        \brief Classe singleton qui gère les Notes, dont elle est composée
+/*! \class Relation
+        \brief Classe qui gère les relations et les couples qui constituent les relations
 */
 
-class NotesManager {
-    //! Tableau de pointeurs sur des Notes
-    Note** notes;
-    //! Nombre de Notes dans le tableau
-    unsigned int nbNotes;
-    //! Taille allouée au tableau
-    unsigned int nbMaxNotes;
-    //! Ajoute la Note n au tableau notes
-    void addNote(Note* n);
-    //! Nom du fichier
-    mutable QString filename;
-
-    //! Renvoie la Note correspondant à id si elle dans le tableau notes
-    Note* findNote(const QString& id) const;
-
-
-    //! Constructeur qui initialise le tableau et sa taille à 0
-    NotesManager():notes(nullptr), nbNotes(0),
-                   nbMaxNotes(0), filename("tmp.xml"){}
-
-    //! Constructeur de recopie interdite
-    NotesManager(const NotesManager& m);
-
-    //! Destructeur de NotesManager, détruit les Notes puis le tableau notes
-    ~NotesManager(){
-            for(unsigned int i = 0 ; i < nbNotes ; i++)
-                delete notes[i];
-            delete[] notes;
-        }
-
-    //! Surcharge de =, recopie par operator= interdite
-    NotesManager& operator=(const NotesManager& m);
-
-    struct Handler {
-        NotesManager* instance;
-
-        Handler() : instance(nullptr){}
-        ~Handler() {
-            if(instance)
-                delete instance;
-            instance = nullptr;
-        }
-
-    };
-
-    //! Handler permettant de rendre NotesManager singleton
-    static Handler handler;
-
-    //! Générateur d'identificateurs pour les Notes
-    QString genererId();
-
-    //! Garde le pointeur d'une note existante (à partir d'un nom, d'un nom de fichier et d'un texte) dans le tableau notes
-    Note& addNote(const QString& nom, const QString& filename, const QString& text);
-    //! Garde le pointeur d'une note existante n dans le tableau notes
-=======
 class Relation {
-    string title;
-    string description;
->>>>>>> Diarra
+    QString title;
+    QString description;
 
 public:
-    //! Renvoie la seule instance de NotesManager
-    static NotesManager& getManager();
-    //! Renvoie la seule instance de NotesManager
-    static void freeManager();
+    //! Constructeur d'une Relation à partir d'un titre et d'une description
+    Relation(const QString& titre, const QString& description): title(titre), description(description){}
 
-    //! Renvoie une référence vers la Note correspondant à id si elle existe dans le tableau notes
-    Note& getNote(const QString& id);
-    //! Renvoie une référence const vers la Note correspondant à id si elle existe dans le tableau notes
-    const Note& getNote(const QString& code) const;
-    //! Renvoie une référence vers la nouvelle Note créée avec l'id id
-    Note& getNewNote(const QString& id);
-
-    //! Renvoie le nom du fichier
-    QString getFilename() const { return filename; }
-    void setFilename(const QString& f) { filename = f; }
-
-    //! Charge le fichier dont le nom correspond au filename
-    void load();
-
-    //! Sauvegarde la note dans le fichier appelé filename
-    void save() const;
-
-// Class Iterator
-    // Dans la partie public car on doit pouvoir y accéder depuis le main
-    class Iterator {
-        //!
-        friend class NotesManager; // Car la méthode Iterator getIterator() const; va utiliser le constructeur Iterator(Note** a, int nbR); qui est dans la zone privée
-        // On a besoin d'un pointeur qui pointe sur l'Note courant
-        Note** currentNote;
-        // On a besoin d'une variable qui va compter le nombre d'éléments parcourus, pour voir si on a parcouru toute la collection ou pas
-        int nbRemain;
-
-        Iterator(Note** n, int nbR) : currentNote(n), nbRemain(nbR){}
-
-    public:
-        Iterator(): currentNote(nullptr), nbRemain(0){}
-        bool isDone() const {
-            return nbRemain == 0;
-        }
-        void next() { // Pas const car il va modifier l'iterator pour passer à l'élément suivant
-            if(isDone())
-                throw NotesException("ERREUR : Fin de la collection\n");
-            currentNote++;
-            nbRemain--;
-        }
-        void first() {
-            //indice_projet = 0;
-        }
-        Note& current() const {
-            if(isDone())
-                throw NotesException("ERREUR : Fin de la collection\n");
-            return **currentNote;
-        }
-    };
-
-    //! Renvoie un itérateur sur le tableau notes
-    Iterator getIterator() const {
-        return Iterator(notes, nbNotes);
-    }
+    //! Retourne le titre de la Note
+    const QString& getTitle() const {return title;}
+    //! Retourne le titre de la Note
+    const QString& getDescription() const {return description;}
 };
-
-/*********************************************************************/
 
 
 
