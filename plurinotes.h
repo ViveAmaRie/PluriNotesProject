@@ -35,11 +35,63 @@ private:
 /*********************************************************************/
 
 
+<<<<<<< HEAD
+=======
+/*********************************************************************
+***                           NotesManager                         ***
+**********************************************************************/
+class Note;
+
+/*! \class NotesManager
+        \brief Classe singleton qui gère les Notes, dont elle est composée
+*/
+
+class NotesManager
+{
+    //! Tableau de pointeurs sur des Notes
+    Note** notes;
+    //! Nombre de Notes dans le tableau
+    unsigned int nbNotes;
+    //! Taille allouée au tableau
+    unsigned int nbMaxNotes;
+    //! Ajoute la Note n au tableau notes
+    void addNote(Note* n);
+    //! Retire la Note n du tableau de notes
+    void deleteNote(Note* n);
+    //! Nom du fichier
+    string filename;
+
+    //! Renvoie la Note correspondant à id si elle dans le tableau notes
+    Note* findNote(const string& id) const;
+
+
+    //! Constructeur qui initialise le tableau et sa taille à 0
+    NotesManager():notes(NULL), nbNotes(0),
+                   nbMaxNotes(0), filename("tmp.dat"){}
+>>>>>>> Diarra
+
+
+<<<<<<< HEAD
+=======
+    //! Destructeur de NotesManager, détruit les Notes puis le tableau notes
+    ~NotesManager(){
+        for(unsigned int i = 0 ; i < nbNotes ; i++)
+            delete notes[i];
+        delete[] notes;
+    }
+>>>>>>> Diarra
 
 
 
-
-
+<<<<<<< HEAD
+=======
+        Handler() : instance(NULL){}
+        ~Handler() {
+            if(instance)
+                delete instance;
+            instance = NULL;
+        }
+>>>>>>> Diarra
 
 
 
@@ -50,6 +102,7 @@ private:
         \brief Classe qui gère les relations et les couples qui constituent les relations
 */
 
+<<<<<<< HEAD
 class Relation {
     QString title;
     QString description;
@@ -65,6 +118,66 @@ public:
 };
 
 
+=======
+    //! Garde le pointeur d'une note existante (à partir d'un nom, d'un nom de fichier et d'une date de disponibilité) dans le tableau notes
+    Note& addNote(const string& nom, const string& filename, const Date& dispo);
+    //! Garde le pointeur d'une note existante n dans le tableau notes
+    //Note& addNote(Note *n);
+
+public:
+    //! Renvoie la seule instance de NotesManager
+    static NotesManager& getInstance();
+    //! Renvoie la seule instance de NotesManager
+    static void libererInstance();
+
+    //! Renvoie une référence vers la Note correspondant à id si elle existe dans le tableau notes
+    Note& getNote(const string& id);
+    //! Renvoie une référence const vers la Note correspondant à id si elle existe dans le tableau notes
+    const Note& getNote(const string& code) const;
+    //! Renvoie une référence vers la nouvelle Note créée avec l'id id
+    Note& getNewNote(const string& id);
+
+// Class Iterator
+    // Dans la partie public car on doit pouvoir y accéder depuis le main
+    class Iterator {
+        //!
+        friend class NotesManager; // Car la méthode Iterator getIterator() const; va utiliser le constructeur Iterator(Note** a, int nbR); qui est dans la zone privée
+        // tableau de notes
+        Note** tab;
+        //indice de la note courante
+        unsigned int indice_note;
+        // On a besoin d'une variable qui va compter le nombre d'éléments parcourus, pour voir si on a parcouru toute la collection ou pas
+        int nbRemain;
+        // un boolean pour savoir si la suppression de la note est possible
+        bool allowSuppr;
+
+        Iterator(Note** n, int nbR, bool s):tab(n), indice_note(0) ,nbRemain(nbR), allowSuppr(s){ }
+
+    public:
+        bool isDone() const { return indice_note == nbRemain; }
+        void next() { // Pas const car il va modifier l'iterator pour passer à l'élément suivant
+            if(isDone())
+                throw NotesException("ERREUR : Fin de la collection\n");
+            ++indice_note;
+            nbRemain--;
+        }
+        void first() { indice_note = 0; }
+        Note& current() const {
+            if(indice_note>=nbRemain){
+                throw NotesException("ERREUR : Fin de la collection\n");
+            }
+            return *tab[indice_note];
+        }
+        void suppr();
+    };
+
+
+    //! Renvoie un itérateur sur le tableau notes
+    Iterator getIterator() const {
+        return Iterator(notes, nbNotes, false);
+    }
+};
+>>>>>>> Diarra
 
 
 
@@ -73,6 +186,8 @@ public:
 /*********************************************************************
 ***                             Note                               ***
 **********************************************************************/
+class Relation;
+
 /*! \class Note
         \brief Classe de Notes composant NotesManager
 */
@@ -108,6 +223,7 @@ class Note {
     //! Retourne le texte de la Note
     const QString& getText() const {return text;}
     //! Retourne la date de création de la Note
+<<<<<<< HEAD
     const Date& getDateCreation() const {return dateCreation;}
     //! Retourne la date de dernière modification de la Note
     const Date& getDateLastModif() const {return dateLastModif;}
@@ -116,6 +232,11 @@ class Note {
     void setTitle(const QString& t) { title = t; }
     //! Affecte une valeur au texte de la Note
     void setText(const QString& t) { text = t; }
+=======
+    Date getDateCreation() const {return dateCreation;}
+    //! Retourne la date de dernière modification de la Note
+    Date getDateLastModif() const {return dateLastModif;}
+>>>>>>> Diarra
 
     //! Edite de la Note
     void edit();
@@ -220,6 +341,7 @@ class Picture : public Multimedia {
 
 };
 
+<<<<<<< HEAD
 
 
 
@@ -285,6 +407,11 @@ class NotesManager {
     //! Garde le pointeur d'une note existante (à partir d'un nom, d'un nom de fichier et d'un texte) dans le tableau notes
     Note& addNote(const QString& nom, const QString& filename, const QString& text);
     //! Garde le pointeur d'une note existante n dans le tableau notes
+=======
+class Relation {
+    string title;
+    string description;
+>>>>>>> Diarra
 
 public:
     //! Renvoie la seule instance de NotesManager

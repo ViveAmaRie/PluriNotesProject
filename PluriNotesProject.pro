@@ -1,6 +1,9 @@
 SOURCES += \
     main.cpp \
+<<<<<<< HEAD
     noteeditor.cpp \
+=======
+>>>>>>> Diarra
     plurinotes.cpp
 
 HEADERS += \
