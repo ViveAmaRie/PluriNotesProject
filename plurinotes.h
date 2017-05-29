@@ -124,7 +124,7 @@ public:
         // tableau de notes
         Note** tab;
         //indice de la note courante
-        int indice_note;
+        unsigned int indice_note;
         // On a besoin d'une variable qui va compter le nombre d'éléments parcourus, pour voir si on a parcouru toute la collection ou pas
         int nbRemain;
         // un boolean pour savoir si la suppression de la note est possible
@@ -153,7 +153,7 @@ public:
 
     //! Renvoie un itérateur sur le tableau notes
     Iterator getIterator() const {
-        return Iterator(notes, nbNotes);
+        return Iterator(notes, nbNotes, false);
     }
 };
 
@@ -165,6 +165,8 @@ public:
 /*********************************************************************
 ***                             Note                               ***
 **********************************************************************/
+class Relation;
+
 /*! \class Note
         \brief Classe de Notes composant NotesManager
 */
@@ -200,9 +202,9 @@ class Note {
     //! Retourne le texte de la Note
     const string& getText() const {return text;}
     //! Retourne la date de création de la Note
-    const string& getDateCreation() const {return dateCreation;}
+    Date getDateCreation() const {return dateCreation;}
     //! Retourne la date de dernière modification de la Note
-    const string& getDateLastModif() const {return dateLastModif;}
+    Date getDateLastModif() const {return dateLastModif;}
 
     //! Edite de la Note
     void edit();
@@ -242,13 +244,13 @@ ostream& operator<<(ostream& f, const Note& n);
 /*! \enum TaskStatus
         \brief Classe d'ensemble de taches, héritant de Notes
 */
-enum TaskSTatus{
+enum TaskStatus{
     pending,
     inProgress,
     done,
 };
 
-class Task : public Notes {
+class Task : public Note {
 private:
     //! Action d'une tache
     string action;
@@ -257,7 +259,7 @@ private:
     //! Deadline d'uune tache
     Date deadline;
     //! Etat de la tache
-    STATUS taskStatus;
+    TaskStatus taskStatus;
 public:
     //! Retourne l'action d'une tache
     string getAction() const {return action;}
@@ -266,13 +268,13 @@ public:
     //! Retourne la deadline d'une tache
     Date getDeadline() const {return deadline;}
     //! Retourne l'état de la tache
-    STATUS getTaskStatus() const {return taskStatus;}
+    TaskStatus getTaskStatus() const {return taskStatus;}
 
 };
 
 /*! \brief Classe d'ensemble d'Articles, héritant de Notes
 */
-class Article : public Notes {
+class Article : public Note {
 private:
     //!texte d'un article
     string text;
@@ -284,7 +286,7 @@ public:
 /*! \brief Classe d'ensemble de mutltimédia, héritant de Notes
 */
 
-class Multimedia : public Notes {
+class Multimedia : public Note {
 private:
     //!description
     string description;
