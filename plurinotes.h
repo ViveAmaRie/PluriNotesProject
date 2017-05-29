@@ -38,6 +38,8 @@ private:
 /*********************************************************************
 ***                           NotesManager                         ***
 **********************************************************************/
+class Note;
+
 /*! \class NotesManager
         \brief Classe singleton qui gère les Notes, dont elle est composée
 */
@@ -52,6 +54,8 @@ class NotesManager
     unsigned int nbMaxNotes;
     //! Ajoute la Note n au tableau notes
     void addNote(Note* n);
+    //! Retire la Note n du tableau de notes
+    void deleteNote(Note* n);
     //! Nom du fichier
     string filename;
 
@@ -67,10 +71,10 @@ class NotesManager
     NotesManager(const NotesManager& n);
 
     //! Destructeur de NotesManager, détruit les Notes puis le tableau notes
-    ~ProjetManager(){
-        for(unsigned int i = 0 ; i < nb ; i++)
-            delete projets[i];
-        delete[] projets;
+    ~NotesManager(){
+        for(unsigned int i = 0 ; i < nbNotes ; i++)
+            delete notes[i];
+        delete[] notes;
     }
 
     //! Surcharge de =, recopie par operator= interdite
@@ -79,11 +83,11 @@ class NotesManager
     struct Handler {
         NotesManager* instance;
 
-        Handler() : instance(nullptr){}
+        Handler() : instance(NULL){}
         ~Handler() {
             if(instance)
                 delete instance;
-            instance = nullptr;
+            instance = NULL;
         }
 
     };
@@ -97,7 +101,7 @@ class NotesManager
     //! Garde le pointeur d'une note existante (à partir d'un nom, d'un nom de fichier et d'une date de disponibilité) dans le tableau notes
     Note& addNote(const string& nom, const string& filename, const Date& dispo);
     //! Garde le pointeur d'une note existante n dans le tableau notes
-    Note& addNote(Note *n);
+    //Note& addNote(Note *n);
 
 public:
     //! Renvoie la seule instance de NotesManager
@@ -117,30 +121,35 @@ public:
     class Iterator {
         //!
         friend class NotesManager; // Car la méthode Iterator getIterator() const; va utiliser le constructeur Iterator(Note** a, int nbR); qui est dans la zone privée
-        // On a besoin d'un pointeur qui pointe sur l'Note courant
-        Note** currentNote;
+        // tableau de notes
+        Note** tab;
+        //indice de la note courante
+        int indice_note;
         // On a besoin d'une variable qui va compter le nombre d'éléments parcourus, pour voir si on a parcouru toute la collection ou pas
         int nbRemain;
+        // un boolean pour savoir si la suppression de la note est possible
+        bool allowSuppr;
 
-        Iterator(Note** n, int nbR) : currentNote(n), nbRemain(nbR){}
+        Iterator(Note** n, int nbR, bool s):tab(n), indice_note(0) ,nbRemain(nbR), allowSuppr(s){ }
 
     public:
-        bool isDone() const {
-            return nbRemain == 0;
-        }
+        bool isDone() const { return indice_note == nbNotes; }
         void next() { // Pas const car il va modifier l'iterator pour passer à l'élément suivant
             if(isDone())
                 throw NotesException("ERREUR : Fin de la collection\n");
-            currentNote++;
+            ++indice_note;
             nbRemain--;
         }
-        void first() {
-            indice_projet = 0;
-        }
+        void first() { indice_note = 0; }
         Note& current() const {
-            return **currentNote;
+            if(indice_note>=nbNotes){
+                throw NotesException("ERREUR : Fin de la collection\n");
+            }
+            return *tab[indice_note];
         }
+        void suppr();
     };
+
 
     //! Renvoie un itérateur sur le tableau notes
     Iterator getIterator() const {

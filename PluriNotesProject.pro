@@ -1,5 +1,6 @@
 SOURCES += \
-    main.cpp
+    main.cpp \
+    plurinotes.cpp
 
 HEADERS += \
     plurinotes.h \
